@@ -23,8 +23,13 @@ jobs:
     - name: Build Docker Image
       run: docker build -t my-lambda .
 
+    - name: Set ECR registry URL
+      id: set-ecr-registry-url
+      run: echo "::set-output name=registry::${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_DEFAULT_REGION }}.amazonaws.com"
+
+
     - name: Tag Docker Image
-      run: docker tag my-lambda:latest ${{ secrets.LOGIN_ECR }}/my-lambda:latest
+      run: docker tag my-lambda:latest ${{ steps.set-ecr-registry-url.outputs.registry }}/my-lambda:latest
 
     - name: Push Docker Image to ECR
-      run: docker push ${{ secrets.LOGIN_ECR }}/my-lambda:latest
+      run: docker push ${{ steps.set-ecr-registry-url.outputs.registry }}/my-lambda:latest
