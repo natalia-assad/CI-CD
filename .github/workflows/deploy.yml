@@ -23,6 +23,10 @@ jobs:
     - name: Build Docker Image
       run: docker build -t my-lambda .
 
+    - name: Login to ECR
+      run: |
+        aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.us-east-1.amazonaws.com
+
     - name: Set ECR registry URL
       id: set-ecr-registry-url
       run: echo "${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_DEFAULT_REGION }}.amazonaws.com" > ecr_registry.txt
